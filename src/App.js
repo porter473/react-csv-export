@@ -2,6 +2,7 @@ import axios from "axios";
 import {React, useState} from "react";
 // import ReactDOM from "react-dom";
 import CsvExport from "./Workaround";
+import {ExportToExcel} from './ExportToExcel'
 
 function App() {
   const fetchData = async () => {
@@ -11,6 +12,7 @@ function App() {
           const responseData = await response.data.Table;
           return responseData;
         };
+          const fileName = "myfile"; // here enter filename for your excel file
 
         const headers = [
           { label: "Security Code", key: "scrip_cd" },
@@ -26,8 +28,9 @@ function App() {
       <CsvExport
         asyncExportMethod={fetchData}
         headers={headers}      >
-        Download me 
+        Download CSV 
       </CsvExport>
+      <ExportToExcel fetchData={fetchData} fileName={fileName} />
       <input type="text" value={str} onChange={e => setStr(e.target.value)}/>
     </div>
   );

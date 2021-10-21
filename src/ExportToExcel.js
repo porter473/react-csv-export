@@ -9,7 +9,7 @@ const [csvData, setCsvData] = React.useState([]);
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
 
-  const exportToCSV = (apiData, fileName) => {
+  const exportToExcel = (apiData, fileName) => {
     const ws = XLSX.utils.json_to_sheet(apiData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
@@ -19,7 +19,7 @@ const [csvData, setCsvData] = React.useState([]);
 
   React.useEffect(() => {
     if (csvData && csvData.length>0 ) {
-        exportToCSV(csvData, fileName);
+        exportToExcel(csvData, fileName);
     }
   }, [csvData]);
 

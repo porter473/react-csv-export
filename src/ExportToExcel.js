@@ -1,36 +1,23 @@
 import React from 'react';
+import worker from 'workerize-loader!./ExportToExcelWorker'; // eslint-disable-line import/no-webpack-loader-syntax
 import * as FileSaver from "file-saver";
-import * as XLSX from "xlsx";
-
-export const ExportToExcel = ({ fetchData, fileName }) => {
-
-const [csvData, setCsvData] = React.useState([]);
-  const fileType =
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-  const fileExtension = ".xlsx";
-
-  const exportToExcel = (apiData, fileName) => {
-    const ws = XLSX.utils.json_to_sheet(apiData);
-    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, fileName + fileExtension);
+const fileExtension = ".xlsx";
+// const worker = new window.Worker("./ExportToExcelWorker.js");
+const workerInstance = worker()
+export const ExportToExcel = ({ apiData, fileName }) => {
+  
+  const exportToCSV = (apiData, fileName) => {
+      console.log("apiData: ", apiData);
+    workerInstance.postMessage({ apiData, fileName });
+    workerInstance.onerror = (err) => err;
+    workerInstance.onmessage = (e) => {
+      const {time, blob} = e.data
+      console.log("time-taken", time)
+      FileSaver.saveAs(blob, fileName + fileExtension);
+    };
   };
-
-  React.useEffect(() => {
-    if (csvData && csvData.length>0 ) {
-        exportToExcel(csvData, fileName);
-    }
-  }, [csvData]);
-
+  
   return (
-      <>
-    {/* <button onClick={(e) => exportToCSV(apiData, fileName)}>Export</button> */}
-    <button onClick={async () => {
-        const newCsvData = await fetchData();
-        console.log("newCsvData: ",newCsvData);
-        setCsvData( newCsvData);
-      }}>Export XLSX</button>
-      </>
+    <button onClick={(e) => exportToCSV(apiData, fileName)}>Export</button>
   );
 };

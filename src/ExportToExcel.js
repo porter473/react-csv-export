@@ -11,9 +11,11 @@ export const ExportToExcel = ({ apiData, fileName }) => {
     workerInstance.postMessage({ apiData, fileName });
     workerInstance.onerror = (err) => err;
     workerInstance.onmessage = (e) => {
-      const {time, blob} = e.data
+      const {time, blob, error} = e.data
       console.log("time-taken", time)
-      FileSaver.saveAs(blob, fileName + fileExtension);
+      if(blob) FileSaver.saveAs(blob, fileName + fileExtension)
+      else
+        console.log(error);
     };
   };
   

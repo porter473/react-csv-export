@@ -13,6 +13,20 @@
   }
 }
 
+a.active{
+  color: red;
+}
+
+div.menu{
+  position: fixed;
+  height: 100%;
+  background-color: antiquewhite;
+}
+
+div.content{
+  margin-left: 100px;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
